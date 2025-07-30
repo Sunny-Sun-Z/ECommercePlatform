@@ -1,5 +1,7 @@
 using Catalog.Data;
 using Microsoft.EntityFrameworkCore;
+using Catalog.Config;
+using Catalog.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://localhost:5001");
@@ -13,6 +15,12 @@ builder.Services.AddSwaggerGen();
 var connstr = builder.Configuration.GetConnectionString("CatalogConnection");
 builder.Services.AddDbContext<CatalogContext>(options =>
     options.UseSqlServer(connstr));
+
+builder.Services.Configure<RabbitMqSettings>(
+    builder.Configuration.GetSection("RabbitMq")
+);    
+// register the publisher as a singleton (it’s IDisposable)
+builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 
 var app = builder.Build();
 

@@ -2,7 +2,7 @@ using Catalog.Data;
 using Catalog.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Catalog.Services;
 namespace Catalog.Controllers
 {
     [ApiController]
@@ -10,10 +10,11 @@ namespace Catalog.Controllers
     public class CatalogController : ControllerBase
     {
         private readonly CatalogContext _context;
-
-        public CatalogController(CatalogContext context)
+        private readonly IRabbitMqPublisher _publisher;
+        public CatalogController(CatalogContext context, IRabbitMqPublisher publisher)
         {
             _context = context;
+            _publisher = publisher;
         }
 
         // GET api/catalog
@@ -39,6 +40,10 @@ namespace Catalog.Controllers
         {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
+
+            // publish the event
+            _publisher.PublishProductCreated(product);
+
             return CreatedAtAction(nameof(GetById),
                                    new { id = product.Id },
                                    product);
