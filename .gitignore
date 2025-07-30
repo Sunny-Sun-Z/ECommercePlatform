@@ -1,34 +1,33 @@
-# Step 1: Create or update your .gitignore at the root of your repo
-echo "bin/
-obj/
+# Ignore build output folders anywhere in the repo
+**/bin/
+**/obj/
+**/Debug*/
+**/Release*/
+
+# Ignore compiled binaries and build artifacts
 *.dll
 *.exe
 *.pdb
 *.cache
-*.cache.json
 *.log
+*.dbmdl
+*.tmp
+*.bak
+*.swp
+
+# IDE-specific stuff
+.vs/
+.idea/
+.vscode/
 *.user
 *.suo
-.vscode/
-*.code-workspace
-App_Data/
-App_Config/
-*.json
-*.bak
-*.tmp
-*.swp
-.DS_Store
-Thumbs.db
+
+# Package stuff
+*.nupkg
+*.snupkg
 .nuget/
-Migrations/
-TestResults/
-coverage/
-*.coverage
-*.coveragexml" > .gitignore
+packages/
 
-# Step 2: Remove tracked files that should now be ignored
-git rm --cached -r .
-
-# Step 3: Add updated files and commit the changes
-git add .
-git commit
+# OS-generated files
+Thumbs.db
+.DS_Store
